@@ -35,7 +35,24 @@ const addWallpaper = async (req, res) => {
 
 const getAllWallpapers = async (req, res) => {
   try {
-    const wallpapers = await Wallpaper.find({});
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    // category filter
+    let query = {};
+    const category = req.query.category;
+    if (category) {
+      query.category = category;
+    }
+
+    // search filter
+    const searchValue = req.query.searchValue;
+    if (searchValue) {
+      query.name = { $regex: new RegExp(searchValue, "i") };
+    }
+
+    const wallpapers = await Wallpaper.find(query).skip(skip).limit(limit);
 
     if (!wallpapers || wallpapers.length === 0) {
       return res.status(404).json({
