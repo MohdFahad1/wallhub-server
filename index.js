@@ -1,12 +1,19 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const app = express();
 
 const PORT = process.env.PORT || 8080;
 
+// middlewares
+app.use(express.json());
+app.use(cors());
+
+// mongodb connection
 const connectDB = require("./src/config/db.js");
 connectDB();
 
+// routes
 app.get("/", (req, res) => {
   res.send("Welcome to WallHub api");
 });
